@@ -1,4 +1,5 @@
 const { app, BrowserWindow } = require('electron');
+const os = require('os-utils');
 const path = require('path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -12,6 +13,11 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true
+    }
   });
 
   // and load the index.html of the app.
@@ -19,6 +25,15 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  os.cpuUsage(function(v){
+    console.log('CPU usage (%): ' + v*100);
+    mainWindow.webContents.send('cpu', v*100);
+    console.log('Mem Usage (%): ' + os.freememPercentage()*100);
+    mainWindow.webContents.send('mem', os.freememPercentage()*100)
+    console.log('Total Mem (GB): ' + os.totalmem()/1024);
+    mainWindow.webContents.send('total-mem', os.totalmem()/1024)
+  });
 };
 
 // This method will be called when Electron has finished
