@@ -11,8 +11,9 @@ if (require('electron-squirrel-startup')) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1000,
     height: 600,
+    icon: __dirname + '/icon.ico',
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
@@ -24,16 +25,18 @@ const createWindow = () => {
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  os.cpuUsage(function(v){
-    console.log('CPU usage (%): ' + v*100);
-    mainWindow.webContents.send('cpu', v*100);
-    console.log('Mem Usage (%): ' + os.freememPercentage()*100);
-    mainWindow.webContents.send('mem', os.freememPercentage()*100)
-    console.log('Total Mem (GB): ' + os.totalmem()/1024);
-    mainWindow.webContents.send('total-mem', os.totalmem()/1024)
-  });
+  // mainWindow.webContents.openDevTools();
+  setInterval(() => {
+    os.cpuUsage(function(v){
+      // console.log('CPU usage (%): ' + v*100);
+      mainWindow.webContents.send('cpu', v*100);
+      // console.log('Mem Usage (%): ' + os.freememPercentage()*100);
+      mainWindow.webContents.send('mem', os.freememPercentage()*100)
+      // console.log('Total Mem (GB): ' + os.totalmem()/1024);
+      mainWindow.webContents.send('total-mem', os.totalmem()/1024)
+    });
+  }, 1000);
+  
 };
 
 // This method will be called when Electron has finished
